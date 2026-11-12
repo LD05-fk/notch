@@ -64,6 +64,7 @@ practice words (`words.js`). You can contribute either or both.
 
 - All changes go through a pull request and need at least one approving
   review before merging. `main` doesn't accept direct pushes or force pushes.
+- CI runs `node --test` on every pull request; it must pass before merging.
 - Keep a PR to one thing: one layout, one language, one fix.
 - Run `node --test` and open `index.html` once in a browser with the console
   open before submitting.

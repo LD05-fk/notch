@@ -5,8 +5,9 @@
 # What it does:
 #   1. gh repo create notch --public --source . --push
 #   2. Protect main: changes only through pull requests with at least one
-#      approving review, no force pushes, no deletion. Admins (you) may bypass,
-#      so you can still merge your own work.
+#      approving review and a passing `test` check (CI, branch up to date),
+#      no force pushes, no deletion. Admins (you) may bypass, so you can
+#      still merge your own work.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -29,8 +30,9 @@ cat <<PLAN
 This will:
   1. Create the PUBLIC repository github.com/$OWNER/$NAME from this folder
      and push branch main.
-  2. Protect main: pull requests only, 1 approving review, no force pushes,
-     no deletion, admins may bypass.
+  2. Protect main: pull requests only, 1 approving review, the "test" check
+     must pass on an up-to-date branch, no force pushes, no deletion,
+     admins may bypass.
 
 PLAN
 read -r -p "Continue? [y/N] " answer
@@ -43,7 +45,7 @@ gh repo create "$NAME" --public --source . --push \
 say "Protecting main"
 gh api --method PUT "repos/$OWNER/$NAME/branches/main/protection" --input - >/dev/null <<'JSON'
 {
-  "required_status_checks": null,
+  "required_status_checks": { "strict": true, "contexts": ["test"] },
   "enforce_admins": false,
   "required_pull_request_reviews": { "required_approving_review_count": 1 },
   "restrictions": null,
