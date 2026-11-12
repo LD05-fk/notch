@@ -1,0 +1,10 @@
+{
+  "name": "notch",
+  "version": "1.0.0",
+  "description": "Notch: learn ten-finger touch typing in small daily steps. Accuracy before speed.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}
