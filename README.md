@@ -20,7 +20,7 @@ rushing:
   binge ahead.
 - **A fixed 30-minute session.** 5 min warm-up, 15 min new lesson, 7 min weak
   keys, 3 min test. The clock only runs while you type.
-- **Combinations, not isolated keys.** Drills are random 3–6 character groups
+- **Combinations, not isolated keys.** Drills are random 2–6 character groups
   that mix the new keys with everything learned and deliberately include hard
   transitions (same finger on another row, top-to-bottom jumps).
 

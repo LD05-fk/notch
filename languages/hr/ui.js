@@ -63,7 +63,7 @@ Notch.registerUI("hr", {
   "lesson.todays": "Današnja lekcija", "lesson.opensTomorrow": "Otvara se sutra", "lesson.unlocksAfter": "Otključava se nakon L{n}",
   "lesson.sample": "Primjer runde", "lesson.target": "Prag", "lesson.bestAcc": "Najbolja točnost", "lesson.speed": "Brzina", "lesson.roundsToPass": "Rundi do praga",
   "legend.newKeys": "nove tipke", "legend.mixKeys": "tipke u kombinaciji", "legend.learned": "već naučeno",
-  "desc.keys": "Uvodi tipke {keys} ({fingers}). Svaka runda miješa nove tipke (~40% znakova) sa svim što si već naučio, u grupama od 3 do 6 znakova.",
+  "desc.keys": "Uvodi tipke {keys} ({fingers}). Svaka runda miješa nove tipke (barem ~40% znakova) sa svim što si već naučio, u grupama od 2 do 6 znakova.",
   "desc.mix": "Nema novih tipki. Kombinira {keys} i namjerno ubacuje teške prijelaze: isti prst na drugom redu i skokove između gornjeg i donjeg reda.",
   "desc.caps": "Velika slova sa Shiftom na suprotnoj ruci od slova: slovo lijeve ruke, desni Shift, i obrnuto.",
   "desc.symbols": "Znakovi koje najčešće tipkaš dok programiraš: {keys}.",
