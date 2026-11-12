@@ -144,7 +144,7 @@ nav.tabs a.pub{margin-left:auto;font-size:.85rem}
 .seg-ctl{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg-ctl button{border:0;background:var(--surface);padding:6px 12px;font-weight:500}
 .seg-ctl button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
-.test-strip{font-size:1.25rem}
+.test-strip{font-size:1.25rem;min-height:0;height:calc(6em + 18px);padding-bottom:0;overflow:hidden}
 
 .heat .key{height:40px;flex-direction:column;line-height:1.1}
 .heat .key small{font-family:var(--mono)}
@@ -180,6 +180,7 @@ nav.tabs a.pub{margin-left:auto;font-size:.85rem}
 
 @media (max-width:600px){
   .strip{font-size:1.15rem;padding:12px}
+  .test-strip{height:calc(6em + 14px);padding-bottom:0}
   .bar{grid-template-columns:90px 1fr 44px}
   .big-stats .v{font-size:1.3rem}
   nav.tabs a.pub{margin-left:0}

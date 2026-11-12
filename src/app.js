@@ -995,16 +995,28 @@
     return wpm;
   }
 
+  /* Once the cursor leaves the top line, that line is done: start the text
+     at the cursor's line, so the line being typed stays on top and the next
+     ones don't shift under the eye word by word. */
+  function dropTypedLine(strip, R, from) {
+    const spans = strip.querySelectorAll(".c");
+    const cur = strip.querySelector(".cur");
+    if (!cur || cur.offsetTop <= spans[0].offsetTop) return false;
+    const first = [...spans].findIndex((s) => s.offsetTop === cur.offsetTop);
+    R.lineStart = from + first;
+    return true;
+  }
+
   function paint() {
     const strip = $("strip"), R = A.round;
     if (!strip || !R) return;
     const run = R.run;
     if (R.ready || run.startedAt !== null) strip.classList.remove("blur");
-    /* Tests are long: show a window around the cursor. */
+    /* Tests are long: show three lines from the line being typed. */
     let from = 0, to = run.text.length;
     if (R.kind === "test") {
-      from = Math.max(0, run.text.lastIndexOf(" ", Math.max(0, run.pos - 40)) + 1);
-      to = Math.min(run.text.length, from + 180);
+      from = R.lineStart || 0;
+      to = Math.min(run.text.length, from + 400);
     }
     let h = "";
     for (let i = from; i < to; i++) {
@@ -1015,6 +1027,7 @@
       h += `<span class="${cls}">${c === " " ? "&nbsp;" : esc(c)}</span>${c === " " ? "<wbr>" : ""}`;
     }
     strip.innerHTML = h;
+    if (R.kind === "test" && dropTypedLine(strip, R, from)) return paint();
     const wpm = paintMeters();
     if (R.kind === "test") return;
 
