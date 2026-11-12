@@ -45,6 +45,7 @@
     roundNo: 0,
     lastKeyAt: 0,
     heldShift: null,
+    pace: null, // { times, results, state }: recent typing, kept across rounds
     test: { lang: null, dur: 30, timer: null, left: 30 },
     setup: null,
     overlay: null,
@@ -198,6 +199,7 @@
     A.param = param ? decodeURIComponent(param) : null;
     if (!S().settings.setupDone && A.route !== "setup") return go("setup");
     if (A.route !== "practice") A.round = null;
+    A.pace = { times: [], results: "", state: "ok" };
     if (A.route === "test") newTest();
     render();
   }
@@ -380,7 +382,8 @@
     if (!r) { go("test"); return false; }
     const same = A.round && A.round.kind === r.kind && A.round.lesson === r.lesson;
     A.roundNo = same ? A.roundNo + 1 : 1;
-    A.round = { ...r, run: N.createRun(r.text, "lesson"), shiftWarn: 0, n: A.roundNo };
+    const hasShift = [...r.text].some((c) => { const k = N.keyFor(A.layout, c); return k && k.layer === "shift"; });
+    A.round = { ...r, run: N.createRun(r.text, "lesson"), shiftWarn: 0, hasShift, n: A.roundNo };
     return true;
   }
 
@@ -398,13 +401,13 @@
     return `<div class="lesson-head">
       <div><div class="label">${label}</div><h1>${head}</h1></div>
       <div class="meters">
-        <div class="meter"><div class="v num" id="m-wpm">0</div><div class="k">wpm</div></div>
+        <div class="meter pace" id="m-pace"><div class="v num" id="m-wpm">0</div><div class="k" id="m-wpm-k">wpm</div></div>
         <div class="meter"><div class="v num" id="m-acc">100%</div><div class="k">${t("roundAccuracy")}</div></div>
+        ${R.hasShift && S().rules.oppositeShift ? `<div class="meter" id="m-shift" title="${esc(t("shift.note"))}"><div class="v num" id="m-shift-n">0×</div><div class="k">${t("shift.label")}</div></div>` : ""}
       </div></div>
     ${ended ? `<div class="alert info" style="margin:0 0 10px">${t("practice.sessionDone")}</div>` : ""}
     ${R.windowed ? `<div class="window"><div style="display:flex;justify-content:space-between;font-size:.8rem;gap:8px;flex-wrap:wrap"><span>${t("window.note", { n: N.WINDOW, acc: S().rules.acc })}</span><span class="num"><b id="w-acc">${pct(N.windowAccuracy(win))}</b> · <span id="w-n">${win.length}</span>/${N.WINDOW}</span></div><div class="window-bar"><b id="w-bar" style="width:${(100 * win.length) / N.WINDOW}%"></b></div></div>` : ""}
     <div class="strip blur" id="strip" data-hint="${esc(t("practice.startHint"))}"></div>
-    <div id="alerts"></div>
     <div class="finger-hint" id="hint"></div>
     ${S().rules.noLook ? `<div class="nolook">${t("practice.noLook")}</div>`
       : `<div class="kb-wrap">${keyboard({ cls: S().rules.fingerColors ? "fingers" : "", pool: R.pool })}</div>${S().rules.fingerColors ? legend() : ""}`}
@@ -902,6 +905,10 @@
         p.window = N.pushWindow(p.window, res.type === "hit");
       }
     }
+    if (R.kind !== "test") {
+      if (res.type === "hit") A.pace.times = [...A.pace.times.slice(1 - N.PACE_CHARS), now];
+      if (res.firstTry && res.want !== " ") A.pace.results = (A.pace.results + (res.type === "hit" ? "1" : "0")).slice(-N.PACE_RESULTS);
+    }
     if (res.type === "hit") {
       d.advanced++;
       d.typedMs += Math.min(now - prevAt, 2000);
@@ -1015,13 +1022,29 @@
       const modTxt = mods.map((m) => (m === "AltRight" ? "AltGr" : t(m === "ShiftLeft" ? "key.shiftLeft" : "key.shiftRight"))).join(" + ");
       hint.innerHTML = `<span class="label">${t("hint.next")}</span><span class="kn">${want === " " ? t("key.space") : esc(want)}</span>${modTxt ? `<span class="muted">${modTxt} +</span>` : ""}<span class="swatch" style="background:var(--f-${k.finger})"></span>${t("finger." + k.finger)}${run.pending ? ` <span class="chip bad">${t("hint.wrong")}</span>` : ""}`;
     }
-    const al = $("alerts");
-    if (!al) return;
-    let a = "";
-    if (R.lesson && N.speedWarnApplies(R.lesson) && wpm > S().rules.speedCap && run.pos > 15)
-      a += `<div class="alert"><b>${t("warn.slow")}</b> ${t("warn.slowNote", { wpm, cap: S().rules.speedCap })}</div>`;
-    if (R.shiftWarn) a += `<div class="alert bad"><b>Shift:</b> ${t("warn.shift", { n: R.shiftWarn })}</div>`;
-    al.innerHTML = a;
+    paintPace(wpm);
+    if ($("m-shift")) {
+      $("m-shift-n").textContent = R.shiftWarn + "×";
+      $("m-shift").classList.toggle("warn", R.shiftWarn > 0);
+    }
+  }
+
+  /* The wpm meter shows recent pace. Over the limit it turns amber; it only
+     asks you to slow down when accuracy is slipping too. Nothing moves. */
+  function paintPace(roundWpm) {
+    const el = $("m-pace"), R = A.round;
+    if (!el) return;
+    const now = performance.now(), rules = S().rules;
+    const recent = N.recentWpm(A.pace.times, now);
+    const acc = N.recentAccuracy(A.pace.results);
+    const applies = R.lesson && N.speedWarnApplies(R.lesson);
+    A.pace.state = applies ? N.paceState({ wpm: recent, acc, cap: rules.speedCap, target: rules.acc, prev: A.pace.state }) : "ok";
+    const shown = recent == null ? roundWpm : Math.round(recent);
+    $("m-wpm").textContent = shown;
+    el.className = "meter pace " + A.pace.state;
+    $("m-wpm-k").textContent = A.pace.state === "rushing" ? `wpm · ${t("pace.slow")}` : "wpm";
+    el.title = A.pace.state === "rushing" ? t("pace.rushingNote", { wpm: shown, cap: rules.speedCap, acc: pct(acc), target: rules.acc })
+      : A.pace.state === "fast" ? t("pace.fastNote", { cap: rules.speedCap }) : "";
   }
 
   /* ---------- Overlay ---------- */

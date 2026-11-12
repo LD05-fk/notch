@@ -68,6 +68,33 @@
 
   N.runAccuracy = (run) => (run.hits + run.misses ? (100 * run.hits) / (run.hits + run.misses) : 100);
 
+  /* ---------- Pace: is speed costing accuracy right now? ----------
+     Judged on recent typing, not the round average, so it reacts to what you're
+     doing now and calms down as soon as you do. */
+  N.PACE_CHARS = 20; // recent speed: the last 20 characters typed
+  N.PACE_RESULTS = 50; // recent accuracy: the last 50 first tries
+  N.PACE_MARGIN = 3; // once flagged, stays until pace drops 3 wpm under the limit
+
+  /* times: when each character was typed (ms). Pausing lowers the result,
+     because the span runs up to `now`. */
+  N.recentWpm = function (times, now, n = N.PACE_CHARS) {
+    if (times.length < n) return null;
+    const sec = (now - times[times.length - n]) / 1000;
+    return sec > 0 ? n / 5 / (sec / 60) : null;
+  };
+
+  /* results: first-try outcomes as a 1/0 string, like the pass window. */
+  N.recentAccuracy = (results, n = N.PACE_RESULTS) => N.windowAccuracy(results.slice(-n));
+
+  /* "ok": at or under the limit. "fast": over it but accuracy holds (a quiet
+     hint). "rushing": over it and accuracy is under the target (slow down). */
+  N.paceState = function ({ wpm, acc, cap, target, prev = "ok" }) {
+    if (wpm == null) return "ok";
+    const limit = prev === "ok" ? cap : cap - N.PACE_MARGIN;
+    if (wpm <= limit) return "ok";
+    return acc < target ? "rushing" : "fast";
+  };
+
   /* The pass window: first-try results of the last 300 non-space characters,
      kept as a string of 1/0 so it can be stored as-is. */
   N.pushWindow = (win, ok) => (win + (ok ? "1" : "0")).slice(-N.WINDOW);
