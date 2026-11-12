@@ -2,7 +2,10 @@
    Everything here is pure except load()/save(), which wrap localStorage. */
 (function (N) {
   N.SCHEMA = 1;
-  N.STORAGE_KEY = "notch";
+  /* Every file:// page in Chromium shares one localStorage, so all keys are
+     prefixed with "notch:", and nothing ever calls localStorage.clear(). */
+  N.STORAGE_KEY = "notch:state";
+  const LEGACY_KEY = "notch"; // used before the prefix; moved on first load
 
   N.DEFAULT_RULES = { acc: 97, speedCap: 45, oppositeShift: true, fingerColors: true, noLook: false };
 
@@ -32,6 +35,10 @@
 
   N.load = function () {
     try {
+      if (localStorage.getItem(N.STORAGE_KEY) === null && localStorage.getItem(LEGACY_KEY) !== null) {
+        localStorage.setItem(N.STORAGE_KEY, localStorage.getItem(LEGACY_KEY));
+        localStorage.removeItem(LEGACY_KEY);
+      }
       const raw = localStorage.getItem(N.STORAGE_KEY);
       if (raw) {
         const s = JSON.parse(raw);

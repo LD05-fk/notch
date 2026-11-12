@@ -37,3 +37,20 @@ test("backup round-trips and rejects other files clearly", () => {
   assert.equal(N.readBackup('{"app":"notch","schema":99,"state":{}}').reason, "newer");
   assert.equal(N.readBackup('{"app":"notch","schema":1,"state":{"settings":1}}').reason, "broken");
 });
+
+test("storage keys are prefixed with notch: and old progress is moved", () => {
+  const mem = new Map();
+  globalThis.localStorage = {
+    getItem: (k) => (mem.has(k) ? mem.get(k) : null),
+    setItem: (k, v) => mem.set(k, String(v)),
+    removeItem: (k) => mem.delete(k),
+  };
+  const old = N.freshState();
+  old.lessons["home-1"] = { passedOn: "2026-11-12" };
+  mem.set("notch", JSON.stringify(old));
+  assert.equal(N.load().lessons["home-1"].passedOn, "2026-11-12");
+  N.save(N.load());
+  assert.deepEqual([...mem.keys()], ["notch:state"]);
+  assert.ok([...mem.keys()].every((k) => k.startsWith("notch:")));
+  delete globalThis.localStorage;
+});
