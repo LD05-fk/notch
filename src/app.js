@@ -630,7 +630,7 @@
     const keys = Array.from({ length: 14 }, (_, i) => N.addDays(today(), i - 13));
     const pts = keys.map((k) => ({ k, wpm: N.dayWpm(S().days[k]), acc: N.dayAccuracy(S().days[k]) })).filter((p) => p.wpm != null);
     if (!pts.length) return `<p class="empty-note">${t("stats.noData")}</p>`;
-    const maxW = Math.max(20, Math.ceil(Math.max(...pts.map((p) => p.wpm)) / 10) * 10);
+    const maxW = Math.max(20, Math.ceil(Math.max(...pts.map((p) => p.wpm)) / 20) * 20); // quarters land on whole numbers
     const minA = Math.min(85, Math.floor(Math.min(...pts.map((p) => p.acc ?? 100)) / 5) * 5);
     const W_ = 420, H = 190, pl = 30, pr = 34, pt = 14, pb = 26;
     const x = (k) => pl + (keys.indexOf(k) * (W_ - pl - pr)) / 13;

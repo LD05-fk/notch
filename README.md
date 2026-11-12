@@ -3,6 +3,11 @@
 Notch teaches ten-finger touch typing in small daily steps. It's named after
 the little bumps on the F and J keys that bring your fingers home.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/practice-dark.png">
+  <img src="docs/screenshots/practice.png" alt="Notch practice screen: a line of letter groups being typed, a progress bar towards the 97% target over 300 characters, and an on-screen keyboard coloured by finger with the next key highlighted.">
+</picture>
+
 It's built for people who already type fast with a bad technique and want to
 fix it without straining their hands. So Notch's main job is to stop you from
 rushing:
@@ -21,6 +26,24 @@ rushing:
 Lessons are defined by physical key position, so they work on any keyboard
 layout. Croatian QWERTZ and US QWERTY are built in; any other layout can be
 calibrated in about two minutes.
+
+## Screenshots
+
+**Lessons.** One card per lesson; passed, today's and locked at a glance.
+
+<img src="docs/screenshots/lessons.png" alt="Lessons page: lesson cards L1 to L25 grouped by module, the first five passed, L6 marked as today, the rest locked.">
+
+**A lesson.** What it trains, which keys, a sample round and your best results.
+
+<img src="docs/screenshots/lesson.png" alt="Lesson 6 page: description, keyboard with the lesson's keys outlined, a sample round of letter groups, and target, best accuracy and a Start lesson button.">
+
+**Stats.** Error rate per key and per finger, speed and accuracy over two weeks, and a practice calendar.
+
+<img src="docs/screenshots/stats.png" alt="Stats page: keyboard heatmap of error rates per key, error bars per finger, a 14-day chart of rising wpm and accuracy, and a practice calendar.">
+
+**Calibration.** For any layout that isn't built in: press each highlighted key once.
+
+<img src="docs/screenshots/first-run-calibration.png" alt="First-run calibration step: an on-screen keyboard filling in as each highlighted key is pressed, with Skip key and Read automatically buttons.">
 
 ## Run it
 
