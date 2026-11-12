@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notch</title>
+<meta name="description" content="Notch: learn ten-finger touch typing in small daily steps. Accuracy before speed.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="logo">F</span>Notch</div>
+    <div class="session" id="session" aria-label="Session">
+      <div class="session-row"><span id="sess-label"></span><span class="num muted" id="sess-time"></span></div>
+      <div class="segs" id="segs"></div>
+    </div>
+    <div class="lang" role="group" id="ui-lang"></div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="view"><p class="loading">Notch</p></main>
+</div>
+
+<!-- Core logic (plain functions, also loaded by the Node tests) -->
+<script src="src/notch.js"></script>
+<script src="src/curriculum.js"></script>
+<script src="src/drill.js"></script>
+<script src="src/engine.js"></script>
+<script src="src/store.js"></script>
+<!-- What's available; the chosen layout and languages are loaded by app.js -->
+<script src="layouts/index.js"></script>
+<script src="languages/index.js"></script>
+<!-- Optional personal presets (gitignored). Missing is fine. -->
+<script src="config.local.js" onerror="this.remove()"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
