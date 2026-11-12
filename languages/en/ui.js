@@ -65,7 +65,7 @@ Notch.registerUI("en", {
   "lesson.todays": "Today's lesson", "lesson.opensTomorrow": "Opens tomorrow", "lesson.unlocksAfter": "Unlocks after L{n}",
   "lesson.sample": "Sample round", "lesson.target": "Target", "lesson.bestAcc": "Best accuracy", "lesson.speed": "Speed", "lesson.roundsToPass": "Rounds to pass",
   "legend.newKeys": "new keys", "legend.mixKeys": "keys in this lesson", "legend.learned": "already learned",
-  "desc.keys": "Introduces {keys} ({fingers}). Every round mixes the new keys (~40% of characters) with everything you've learned, in groups of 3 to 6.",
+  "desc.keys": "Introduces {keys} ({fingers}). Every round mixes the new keys (at least ~40% of characters) with everything you've learned, in groups of 2 to 6.",
   "desc.mix": "No new keys. Combines {keys} and deliberately adds hard transitions: the same finger on another row, and jumps between top and bottom rows.",
   "desc.caps": "Capitals with the Shift on the opposite hand to the letter: left-hand letter, right Shift, and the other way round.",
   "desc.symbols": "The symbols you type most when programming: {keys}.",
