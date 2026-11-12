@@ -141,8 +141,7 @@
     let last = -1;
     st.forEach((s, i) => { if (s === "passed") last = i; });
     if (last < 0) return new Set(A.lessons[0] ? A.lessons[0].chars : []);
-    const L = A.lessons[last];
-    return new Set([...L.pool, ...(L.kind === "keys" || L.kind === "symbols" ? L.chars : [])]);
+    return A.lessons[last].pool;
   }
   const capsLearned = () => A.lessons.some((l, i) => l.kind === "caps" && statuses()[i] === "passed");
   const weakKeys = () => N.weakKeys(S().days, today(), learned());
@@ -210,7 +209,6 @@
     $("tabs").hidden = setupMode;
     $("ui-lang").setAttribute("aria-label", t("uiLanguage"));
     $("ui-lang").innerHTML = N.languageIndex.length > 1 ? N.languageIndex.map((l) => `<button data-ui="${l.code}" aria-pressed="${l.code === N.lang}" title="${esc(l.name)}">${l.code.toUpperCase()}</button>`).join("") : "";
-    document.title = "Notch";
   }
 
   function render() {
@@ -245,7 +243,7 @@
     for (const row of N.ROWS) {
       h += '<div class="row">';
       for (let [code, w = 1] of row) {
-        if (code === "gap" || (code === "AltRight" && !hasAltGr)) { h += `<div style="flex:${code === "AltRight" ? 1.4 : w} 1 0"></div>`; continue; }
+        if (code === "gap" || (code === "AltRight" && !hasAltGr)) { h += `<div style="flex:${w} 1 0"></div>`; continue; }
         if (code === "IntlBackslash" && !iso) continue;
         if (code === "ShiftLeft" && !iso) w = 2.3;
         const f = N.FINGER_OF[code];
@@ -344,7 +342,7 @@
     const d = A.drill || (A.drill = { kind: "session" });
     if (d.kind === "lesson") {
       const L = lessonById(d.id);
-      if (L && statusOf(L) !== "locked" && !(statusOf(L) === "tomorrow")) return lessonRound(L);
+      if (L && ["today", "passed"].includes(statusOf(L))) return lessonRound(L);
       A.drill = { kind: sessionEnded() ? "review" : "session" };
       return nextRound();
     }

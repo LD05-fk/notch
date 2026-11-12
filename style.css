@@ -110,7 +110,6 @@ nav.tabs a.pub{margin-left:auto;font-size:.85rem}
 .key.locked{opacity:.35}
 .key.home::after{content:"";position:absolute;bottom:6px;width:10px;height:2px;border-radius:1px;background:currentColor;opacity:.5}
 .key.target{box-shadow:0 0 0 3px var(--accent);z-index:1;transform:translateY(-1px)}
-.key.press{transform:translateY(2px)}
 .key.flash{box-shadow:0 0 0 3px var(--bad)}
 .key.empty{color:var(--muted)}
 .kb-legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:10px;font-size:.75rem;color:var(--muted)}
