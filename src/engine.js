@@ -30,7 +30,7 @@
       run.marks[run.pos] = ok ? "ok" : "err";
       ok ? run.hits++ : run.misses++;
       run.pos++;
-      return finishIfDone(run, now, { type: ok ? "hit" : "miss", want, firstTry: ok });
+      return finishIfDone(run, now, { type: ok ? "hit" : "miss", want, firstTry: true });
     }
 
     if (key !== want) {
