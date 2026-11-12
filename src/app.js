@@ -868,6 +868,8 @@
 
   /* ---------- Typing ---------- */
 
+  const MODIFIER_KEYS = new Set(["Shift", "Control", "Alt", "AltGraph", "Meta", "CapsLock", "Dead"]);
+
   document.addEventListener("keydown", (e) => {
     if (e.code === "ShiftLeft" || e.code === "ShiftRight") { A.heldShift = e.code; }
     if (calibCode()) return calibrateKey(e);
@@ -879,6 +881,15 @@
     if (e.target.closest && e.target.closest("input, textarea, select")) return;
     if ((e.ctrlKey || e.metaKey) && !e.getModifierState("AltGraph")) return;
     if (!A.round || !typingView()) return;
+    /* "Press any key to start": that first key only reveals the text, it isn't typed. */
+    if (A.round.kind !== "test" && !A.round.ready && A.round.run.startedAt === null && !MODIFIER_KEYS.has(e.key)) {
+      e.preventDefault();
+      A.round.ready = true;
+      A.lastKeyAt = Date.now();
+      drawSession();
+      paint();
+      return;
+    }
     if (e.key === "Backspace") { e.preventDefault(); typeKey("Backspace"); }
     else if (e.key.length === 1) { e.preventDefault(); typeKey(e.key); }
   });
@@ -988,7 +999,7 @@
     const strip = $("strip"), R = A.round;
     if (!strip || !R) return;
     const run = R.run;
-    if (run.startedAt !== null) strip.classList.remove("blur");
+    if (R.ready || run.startedAt !== null) strip.classList.remove("blur");
     /* Tests are long: show a window around the cursor. */
     let from = 0, to = run.text.length;
     if (R.kind === "test") {
