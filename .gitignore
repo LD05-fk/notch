@@ -1,0 +1,4 @@
+# Your personal presets; see config.example.js
+config.local.js
+.DS_Store
+*.swp
