@@ -14,7 +14,8 @@ rushing:
 
 - **Accuracy before speed.** A lesson passes at 97% accuracy over your last
   300 characters. A wrong key doesn't move on until you press the right one.
-  Early lessons warn you when you type too fast.
+  In early lessons, going over your speed limit tints the wpm amber, and
+  Notch asks you to slow down only when the speed starts costing accuracy.
 - **One new lesson per day.** Muscle memory settles overnight, so you can't
   binge ahead.
 - **A fixed 30-minute session.** 5 min warm-up, 15 min new lesson, 7 min weak

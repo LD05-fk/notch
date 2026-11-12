@@ -194,3 +194,8 @@ nav.tabs a.pub{margin-left:auto;font-size:.85rem}
 .import-msg{font-size:.85rem;margin:0}
 .import-msg.bad{color:var(--bad)} .import-msg.good{color:var(--good)}
 .loading{color:var(--muted);padding:40px 0;text-align:center}
+/* Pace and Shift live in the meters: fixed width, colour only, so nothing on the page moves */
+.meter.pace{min-width:9.5rem}
+.meter .v,.meter .k{transition:color .4s}
+.meter.fast .v,.meter.rushing .v,.meter.warn .v{color:var(--warn)}
+.meter.rushing .k{color:var(--warn);font-weight:700}

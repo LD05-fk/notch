@@ -41,3 +41,30 @@ test("pass window: last 300 characters at the target", () => {
   assert.ok(Math.abs(N.windowAccuracy(w) - 96.67) < 0.01);
   assert.ok(!N.windowPassed(w, 97));
 });
+
+test("recent pace looks at the last 20 characters and drops while you pause", () => {
+  const times = Array.from({ length: 30 }, (_, i) => i * 250); // 4 chars/s = 48 wpm
+  assert.equal(N.recentWpm(times.slice(0, 10), 2500), null, "not enough typing yet");
+  assert.equal(Math.round(N.recentWpm(times, 29 * 250 + 250)), 48);
+  assert.ok(N.recentWpm(times, 29 * 250 + 15000) < 15, "a pause brings it down");
+});
+
+test("recent accuracy uses the last 50 first tries", () => {
+  assert.equal(N.recentAccuracy("0".repeat(100) + "1".repeat(50)), 100);
+  assert.equal(N.recentAccuracy("1".repeat(48) + "00"), 96);
+});
+
+test("pace: fast and accurate is only a hint; fast and sloppy says slow down", () => {
+  const base = { cap: 45, target: 97 };
+  assert.equal(N.paceState({ ...base, wpm: 40, acc: 90 }), "ok", "slow is never flagged");
+  assert.equal(N.paceState({ ...base, wpm: 55, acc: 98 }), "fast");
+  assert.equal(N.paceState({ ...base, wpm: 55, acc: 94 }), "rushing");
+  assert.equal(N.paceState({ ...base, wpm: null, acc: 50 }), "ok");
+});
+
+test("pace has a margin so it doesn't flicker around the limit", () => {
+  const base = { cap: 45, target: 97, acc: 94 };
+  assert.equal(N.paceState({ ...base, wpm: 44 }), "ok");
+  assert.equal(N.paceState({ ...base, wpm: 44, prev: "rushing" }), "rushing", "stays until clearly slower");
+  assert.equal(N.paceState({ ...base, wpm: 41, prev: "rushing" }), "ok");
+});
